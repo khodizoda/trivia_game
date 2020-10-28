@@ -87,7 +87,7 @@ class TriviaGame():
 		self.random_options_order = []
 		self.total_score = 0
 
-	def	__generate_random_sequence(self):
+	def __generate_random_sequence(self):
 		''' Generates random sequence of ints between 0 and the
 		total number of questions to define the order of questions
 		to ask.
@@ -100,7 +100,7 @@ class TriviaGame():
 		return random.sample(range(0, self.total_num_questions),
 									self.total_num_questions)
 	
-	def	__get_next_question(self, questions_sequence):
+	def __get_next_question(self, questions_sequence):
 		''' Pops an item from the end of the given
 		questions_sequence.
 
@@ -128,7 +128,7 @@ class TriviaGame():
 		for choice, position in enumerate(self.random_options_order):
 			print(f"Option [{choice + 1}]: {self.options_list[position]}")
 
-	def	__prompt_user_for_input(self):
+	def __prompt_user_for_input(self):
 		''' Prompts a user for an input and
 		checks if the input is valid. 
 		'''
@@ -138,7 +138,7 @@ class TriviaGame():
 		# implement option n for next / skip
 		return int(input("\nWhat do you think? "))
 
-	def	__evaluate_user_choice(self, user_choice, next_question):
+	def __evaluate_user_choice(self, user_choice, next_question):
 		''' Evaluates a user's choice against the correct answer
 		given a user's choice and position of the question in
 		questions list. It also prints the outcome and user's
@@ -159,7 +159,7 @@ class TriviaGame():
 			print(f"Incorrect. Correct answer is {correct_answer}\n")
 		print(f"Your total score is {self.total_score}.\n") 
 
-	def	run_game(self):
+	def run_game(self):
 		''' Runs `Tandem Trivia` game 
 		'''
 		terminal_art().print_intro()
