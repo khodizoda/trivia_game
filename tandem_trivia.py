@@ -4,6 +4,10 @@
 File: tandem_trivia.py
 ----------------------
 This program runs a `Tandem Trivia` game containing 10 questions.
+
+TO DO:
+- error management
+- write tests
 """
 
 import json
@@ -72,6 +76,7 @@ class TriviaGame():
 			round one.
 		options_list (list): An empty list to be used to store
 			a list of multiple-choice answers to a given question.
+		options_count(int): A len of the options_list.
 		random_options_order (list): An empty list to be used to
 			store a list of random ints between 0 and
 			len(options_list), which will define the order of
@@ -84,6 +89,7 @@ class TriviaGame():
 		self.total_num_questions = len(self.questions)
 		self.max_questions_round_one = 10
 		self.options_list = []
+		self.options_count = 0
 		self.random_options_order = []
 		self.total_score = 0
 
@@ -97,7 +103,7 @@ class TriviaGame():
 				between 0 and len(total_num_questions),
 				which defines the order of questions to ask.
 		'''
-		return random.sample(range(0, self.total_num_questions),
+		return random.sample(range(0, self.total_num_questions), \
 									self.total_num_questions)
 	
 	def __get_next_question(self, questions_sequence):
@@ -121,10 +127,11 @@ class TriviaGame():
 			next_question(int): A position of a given question in
 				the list of all questions.
 		'''
-		options_count = len(self.questions[next_question]['options'])
+		self.options_count = len(self.questions[next_question]['options'])
 		self.options_list = self.questions[next_question]['options']
 	
-		self.random_options_order = random.sample(range(0, options_count), options_count)
+		self.random_options_order = \
+			random.sample(range(0, self.options_count), self.options_count)
 		for choice, position in enumerate(self.random_options_order):
 			print(f"Option [{choice + 1}]: {self.options_list[position]}")
 
@@ -132,12 +139,17 @@ class TriviaGame():
 		''' Prompts a user for an input and
 		checks if the input is valid. 
 		'''
-		# TO DO: check if input is int, if not error and ask again
-		# check that the answer is in a correct range `options_count`
-		# implement option q to quit
 		# implement option n for next / skip
-		return int(input("\nWhat do you think? "))
-
+		user_input = input("\nWhat do you think? ")
+		while True:
+			if user_input.lower() == 'q' or user_input.lower() == 'quit':
+				exit()
+			if user_input.isdigit() and \
+				int(user_input) in range(1, self.options_count + 1):
+					return int(user_input)
+			user_input = \
+				input(f"\nPlease, choose a valid option between 1 and {self.options_count}: ")
+			
 	def __evaluate_user_choice(self, user_choice, next_question):
 		''' Evaluates a user's choice against the correct answer
 		given a user's choice and position of the question in
@@ -156,7 +168,7 @@ class TriviaGame():
 			self.total_score += 10
 			print(f"\nCorrect!\n")
 		else:
-			print(f"Incorrect. Correct answer is {correct_answer}\n")
+			print(f"\nIncorrect. Correct answer is {correct_answer}\n")
 		print(f"Your total score is {self.total_score}.\n") 
 
 	def run_game(self):
@@ -176,7 +188,10 @@ class TriviaGame():
 			self.__evaluate_user_choice(user_choice, next_question)
 		#check how many points was earned, if enougn --> well done, if not, do you want to try again? or practice makes
 		# it perfect
-		print(f"Round one is over. Your have earned {self.total_score} points. Well done!\n") 
+		print(f"""
+			Round one is over. Your have earned {self.total_score} points. 
+			Well done!\n
+			""") 
 
 def main():
 	TriviaGame().run_game()
