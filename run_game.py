@@ -7,7 +7,7 @@ This program runs a `Tandem Trivia` game.
 """
 
 #source: http://patorjk.com/software/taag/#p=display&f=ANSI%20Regular&t=welcome%20%0ATandem%0ATrivia
-from colorama import Fore, Style
+from colorama import init, Fore, Style
 from tandem_trivia import TriviaGame
 
 class PrintCore():
@@ -31,22 +31,37 @@ class PrintCore():
 		  ▀        █    ▐   █  █   ▐    █        
 		          ▀          █▐        █         
 		                     ▐        ▀   
-			{Style.RESET_ALL}""")
-		print("Got a minute?\nWelcome to Tandem Trivia!\nChoose an option to begin.\n")
+		""")
+		print(f"Got a minute?\nWelcome to Tandem Trivia!\n\n{Fore.YELLOW}Choose an option to begin.{Style.RESET_ALL}\n")
+
+	def print_game_over(self):
+		print(f"""{Fore.MAGENTA}
+			  _____              
+			 / ___/__ ___ _  ___ 
+			/ (_ / _ `/  ' \/ -_)
+			\___/\_,_/_/_/_/\__/ 
+			/ _ \ |/ / -_) __/   
+			\___/___/\__/_/                     
+
+			Your have earned -- points.
+			Well done!
+		""")
+		exit()
+
 
 	def print_navigation_bar(self):
 		print("| [1] GET INFO | [2] START GAME | [3] CHOOSE MODE | [4] QUIT |")
-		user_input = input('')
-		NavigationBar().navigation_bar(user_input)
+		NavigationBar().navigation_bar()
 
 class NavigationBar():
 	def __init__(self):
 		pass
 
 	def print_info(self):
+		init(autoreset=True)
 		print(f"""{Fore.GREEN}
-		 Got a minute? \n
-		 Welcome to the TANDEM TRIVIA!
+		Got a minute? \n
+		Welcome to the TANDEM TRIVIA!
 
 		{Fore.YELLOW}
 		###########
@@ -98,26 +113,41 @@ class NavigationBar():
 		to answer a question, does not have a possibility
 		to skip questions.
 
-		{Style.RESET_ALL}""")
+		""")
 		PrintCore().print_navigation_bar()
 
 	def start_game(self):
 		TriviaGame().run_game()
+		PrintCore().print_game_over()
 
 	def choose_mode(self):
+		print("in_developement")
 		pass
 
-	def	navigation_bar(self, user_input):
-		if user_input.lower() == '1':
-			self.print_info()
-		if user_input.lower() == '2':
-			self.start_game()
-		if user_input.lower() == '3':
-			self.choose_mode()
-		if user_input.lower() == '4':
-			exit()
-		else:
-			print("To start a game please enter `s`")
+	#def play_bonus_round(self):
+	#	user_input = input("Do you want to play BONUS ROUND? [Y | N] ")
+	#	while True:
+	#		if user_input.lower() == 'y' or user_input.lower() == 'yes':
+	#			TriviaGame().run_bonus_round()
+	#			PrintCore().print_game_over()
+	#		if user_input.lower() == 'n' or user_input.lower() == 'no':
+	#			PrintCore().print_game_over()
+	#		else:
+	#			user_input = input("Please, choose a valid option: [Y | N] ")
+
+	def	navigation_bar(self):
+		while True:
+			user_input = input('')
+			if user_input == '1':
+				self.print_info()
+			if user_input == '2':
+				self.start_game()
+			if user_input == '3':
+				self.choose_mode()
+			if user_input == '4' or user_input.lower() == 'q':
+				exit()
+			else:
+				print("Please, choose a valid option:")
 
 def main():
 	PrintCore().print_intro()

@@ -8,7 +8,7 @@ This program runs a `Tandem Trivia` game.
 
 import json
 import random
-from colorama import Fore, Style
+from colorama import init, Fore, Style
 
 class PrepareData():
 	'''
@@ -87,6 +87,10 @@ class TriviaGame():
 		self.options_count = 0
 		self.random_options_order = []
 		self.total_score = 0
+		self.is_bonus_round = 0
+		self.count_correct_answers = 0
+		self.questions_sequence = []
+
 
 	def __generate_random_sequence(self):
 		''' Generates random sequence of ints between 0 and the
@@ -98,21 +102,21 @@ class TriviaGame():
 				between 0 and len(total_num_questions),
 				which defines the order of questions to ask.
 		'''
-		return random.sample(range(0, self.total_num_questions), \
+		self.questions_sequence = random.sample(range(0, self.total_num_questions), \
 									self.total_num_questions)
 	
-	def __get_next_question(self, questions_sequence):
+	def __get_next_question(self):
 		''' Pops an item from the end of the given
-		questions_sequence.
+		self.questions_sequence.
 
 		Attribute:
-			questions_sequence(list): A list with an 
+			self.questions_sequence(list): A list with an 
 				order of questions to ask.
 
 		Returns:
-			(int): The last element of the questions_sequence.
+			(int): The last element of the self.questions_sequence.
 		'''
-		return questions_sequence.pop()
+		return self.questions_sequence.pop()
 
 	def __print_options_randomly(self, next_question):
 		''' Prints, in a random order, multiple-choice answers 
@@ -128,17 +132,16 @@ class TriviaGame():
 		self.random_options_order = \
 			random.sample(range(0, self.options_count), self.options_count)
 		for choice, position in enumerate(self.random_options_order):
-			print(f"Option [{choice + 1}]: {self.options_list[position]}")
+			print(f"{Fore.CYAN}Option [{choice + 1}]: {self.options_list[position]}{Style.RESET_ALL}")
 
 	def __prompt_user_for_input(self):
 		''' Prompts a user for an input and
 		checks if the input is valid. 
 		'''
-		# implement option n for next / skip
 		user_input = input("\nWhat do you think? ")
 		while True:
 			if user_input.lower() == 's' or user_input.lower() == 'score':
-				print(f"Your current score is {self.total_score}.")
+				print(f"{Fore.MAGENTA}Your current score is {self.total_score}.")
 				user_input = input("\nSo, what do you think? ")
 			if user_input.lower() == 'q' or user_input.lower() == 'quit':
 				exit()
@@ -159,34 +162,63 @@ class TriviaGame():
 			next_question(int): A position of a given question in
 				the list of all questions.
 		'''
+		init(autoreset=True)
 		correct_answer = self.questions[next_question]['correct']
 		option_position = self.random_options_order[user_choice - 1]
 		user_answer = self.options_list[option_position]
 
 		if correct_answer == user_answer:
-			self.total_score += 10
-			print(f"\nCorrect!\n")
+			self.count_correct_answers += 1
+			if not self.is_bonus_round:
+				self.total_score += 10
+			print(f"\n{Fore.GREEN}Correct!\n")
 		else:
-			print(f"\nIncorrect. Correct answer is <{correct_answer}>\n")
-		print(f"Your total score is {self.total_score}.\n") 
+			print(f"\n{Fore.RED}Incorrect. {Fore.GREEN}Correct answer is <{correct_answer}>.\n")
+		if not self.is_bonus_round:
+			print(f"Your current score is {self.total_score}.\n") 
+
+	def run_bonus_round(self):
+		max_questions_bonus_round = 5
+		self.is_bonus_round = 1
+		self.count_correct_answers = 0
+		print('Welcome to the BONUS ROUND. Good luck!')
+
+		for bonus_question_count in range(0, max_questions_bonus_round):
+			next_question = self.__get_next_question()
+
+			print(f"\n{Fore.MAGENTA}Bonus question #{bonus_question_count + 1}: {self.questions[next_question]['question']}\n")
+			self.__print_options_randomly(next_question)
+			user_choice = self.__prompt_user_for_input()
+			self.__evaluate_user_choice(user_choice, next_question)
+
+		if self.count_correct_answers == max_questions_bonus_round:
+			self.total_score *= 2
+		else:
+			self.total_score = 0
+		print(f"You total score is {self.total_score}")
 
 	def run_game(self):
 		''' Runs `Tandem Trivia` game 
 		'''
 		print(f"\nReady for the TANDEM TRIVIA?\n")
-
-		questions_sequence = self.__generate_random_sequence()
+		self.__generate_random_sequence()
 
 		for question_count in range(0, self.max_questions_round_one):
-			next_question = self.__get_next_question(questions_sequence)
+			next_question = self.__get_next_question()
 
-			print(f"\nQuestion #{question_count + 1}: {self.questions[next_question]['question']}\n")
+			print(f"\n{Fore.YELLOW}Question #{question_count + 1}: {self.questions[next_question]['question']}\n")
 			self.__print_options_randomly(next_question)
 			user_choice = self.__prompt_user_for_input()
 			self.__evaluate_user_choice(user_choice, next_question)
-		#check how many points was earned, if enougn --> well done, if not, do you want to try again? or practice makes
-		# it perfect
-		print(f"""
-			Round one is over. Your have earned {self.total_score} points. 
-			Well done!\n
-			""")
+		self.play_bonus_round()
+
+	def play_bonus_round(self):
+		user_input = input("Do you want to play BONUS ROUND? [Y | N] ")
+		while True:
+			if user_input.lower() == 'y' or user_input.lower() == 'yes':
+				self.run_bonus_round()
+				break
+			if user_input.lower() == 'n' or user_input.lower() == 'no':
+				break
+			else:
+				user_input = input("Please, choose a valid option: [Y | N] ")
