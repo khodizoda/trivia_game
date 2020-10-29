@@ -3,17 +3,12 @@
 """
 File: tandem_trivia.py
 ----------------------
-This program runs a `Tandem Trivia` game containing 10 questions.
-
-TO DO:
-- error management
-- write tests
+This program runs a `Tandem Trivia` game.
 """
 
 import json
 import random
 from colorama import Fore, Style
-from terminal_art import terminal_art
 
 class PrepareData():
 	'''
@@ -142,6 +137,9 @@ class TriviaGame():
 		# implement option n for next / skip
 		user_input = input("\nWhat do you think? ")
 		while True:
+			if user_input.lower() == 's' or user_input.lower() == 'score':
+				print(f"Your current score is {self.total_score}.")
+				user_input = input("\nSo, what do you think? ")
 			if user_input.lower() == 'q' or user_input.lower() == 'quit':
 				exit()
 			if user_input.isdigit() and \
@@ -162,20 +160,20 @@ class TriviaGame():
 				the list of all questions.
 		'''
 		correct_answer = self.questions[next_question]['correct']
-		user_answer = self.options_list[self.random_options_order[user_choice - 1]]
+		option_position = self.random_options_order[user_choice - 1]
+		user_answer = self.options_list[option_position]
 
 		if correct_answer == user_answer:
 			self.total_score += 10
 			print(f"\nCorrect!\n")
 		else:
-			print(f"\nIncorrect. Correct answer is {correct_answer}\n")
+			print(f"\nIncorrect. Correct answer is <{correct_answer}>\n")
 		print(f"Your total score is {self.total_score}.\n") 
 
 	def run_game(self):
 		''' Runs `Tandem Trivia` game 
 		'''
-		terminal_art().print_intro()
-		print(f"Got a minute?\n\nWelcome to TANDEM TRIVIA!\n")
+		print(f"\nReady for the TANDEM TRIVIA?\n")
 
 		questions_sequence = self.__generate_random_sequence()
 
@@ -191,10 +189,4 @@ class TriviaGame():
 		print(f"""
 			Round one is over. Your have earned {self.total_score} points. 
 			Well done!\n
-			""") 
-
-def main():
-	TriviaGame().run_game()
-
-if __name__ == "__main__":
-	main()
+			""")
