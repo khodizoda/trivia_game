@@ -17,7 +17,7 @@ Execute with:
 python3 run_game.py
 ```
 
-### :soon: Additional features to add:
+### :soon: Features to add:
 - Game mode:
 	- RELAXED MODE: A mode without a timer, but with a possibility to skip up to two questions per game;
 	- CHALLENGE MODE: A mode with a 10 seconds timer to answer a question and without a possibility to skip questions;
