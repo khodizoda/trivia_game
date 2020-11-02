@@ -1,7 +1,7 @@
 # Tandem Trivia
 A trivia game for Tandem
 
-#Usage:
+### Usage:
 ```
 git clone https://github.com/khodizoda/trivia_game
 cd trivia_game
