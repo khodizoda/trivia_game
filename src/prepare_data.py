@@ -13,7 +13,7 @@ class PrepareData():
     	path_to_file (str): A path to file containing the data.
 	'''
 	def __init__(self):
-		self.path_to_file = './data/Apprentice_TandemFor400_Data.json'
+		self.path_to_file = '../data/Apprentice_TandemFor400_Data.json'
 
 	def __parse_file(self):
 		''' Parses json file to a list.
