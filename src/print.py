@@ -46,10 +46,10 @@ class PrintTrivia():
 			/ _ \ |/ / -_) __/   
 			\___/___/\__/_/                     
 
-			{Fore.YELLOW}
-			Your have earned {score} points.
-			Well done!
+			{Fore.YELLOW}Your have earned {score} points.
 		""")
+		if score >= 50:
+			print("\t\t\tWELL DONE!\n")
 		exit()
 
 	def print_navigation_bar(self):
